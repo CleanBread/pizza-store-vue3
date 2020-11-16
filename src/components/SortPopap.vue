@@ -35,9 +35,6 @@
 import { onMounted, onUnmounted, ref } from 'vue';
 export default {
   setup() {
-    const isVisiblePopap = ref(false);
-    const sortBlockRef = ref(null);
-    const currentCat = ref(0);
     const sortCats = [
       {
         name: 'популярности',
@@ -48,12 +45,17 @@ export default {
         type: 'price',
       },
     ];
+    const isVisiblePopap = ref(false);
+    const sortBlockRef = ref(null);
+    const activeCatText = ref(sortCats[0].name);
+    const currentCat = ref(0);
     const toggleVisiblePopap = () => {
       isVisiblePopap.value = !isVisiblePopap.value;
     };
 
     const changeCurrentCat = (index) => {
       currentCat.value = index;
+      activeCatText.value = sortCats[index].name;
       isVisiblePopap.value = false;
     };
 
@@ -76,6 +78,7 @@ export default {
       isVisiblePopap,
       toggleVisiblePopap,
       currentCat,
+      activeCatText,
       sortCats,
       changeCurrentCat,
       outsideClick,
@@ -95,6 +98,7 @@ export default {
       transform: rotate(0deg);
     }
     .sort__popup {
+      z-index: 10;
       opacity: 1;
     }
   }
@@ -120,7 +124,7 @@ export default {
 
   &__popup {
     position: absolute;
-    right: 0;
+    left: 0;
     margin-top: 15px;
     background: #ffffff;
     box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.09);
@@ -130,6 +134,7 @@ export default {
     width: 160px;
     opacity: 0;
     transition: 0.3s;
+    z-index: -1;
     ul {
       overflow: hidden;
       li {

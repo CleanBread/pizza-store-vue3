@@ -4,4 +4,8 @@ import router from './router';
 
 import './styles/app.scss'
 
-createApp(App).use(router).mount('#app')
+const Vue = createApp(App)
+Vue.config.errorHandler = function (err, vm, info) {
+    console.log(err, vm, info, 'err')
+}
+Vue.use(router).mount('#app')
