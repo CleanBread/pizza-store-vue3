@@ -1,5 +1,5 @@
 <template>
-  <div ref="headerRef" class="header" :class="{ active: isHeaderActive }">
+  <div ref="headerRef" class="header">
     <div class="container">
       <router-link to="/">
         <div class="header__logo">
@@ -9,9 +9,9 @@
           </div>
         </div>
       </router-link>
-      <div v-if="this.$route.path === '/'" class="header__cart">
+      <div v-if="this.$route.path === '/'" class="header__basket">
         <router-link to="/basket">
-          <Button class="button--cart">
+          <Button class="button--basket">
             <span>{{ totalPrice }} ₽</span>
             <div class="button__delimiter"></div>
             <svg
@@ -52,7 +52,6 @@
 </template>
 
 <script>
-import { onMounted, ref } from 'vue';
 import Button from './Button';
 export default {
   components: {
@@ -62,26 +61,9 @@ export default {
     const totalPrice = 1000;
     const totalCount = 3;
 
-    const isHeaderActive = ref(false);
-    const headerRef = ref(null);
-
-    onMounted(() => {
-      window.addEventListener('scroll', () => {
-        const top = headerRef.value.getBoundingClientRect().top;
-        console.log(top);
-        if (top <= -25) {
-          isHeaderActive.value = true;
-        } else {
-          isHeaderActive.value = false;
-        }
-      });
-    });
-
     return {
       totalPrice,
-      headerRef,
       totalCount,
-      isHeaderActive,
     };
   },
 };
@@ -90,17 +72,13 @@ export default {
 <style lang="scss" scoped>
 .header {
   border-bottom: 1px solid $gray-line;
-  padding: 40px 0;
+  padding: 20px 0;
   position: sticky;
-  top: -30px;
+  top: 0px;
   background: #fff;
   border-radius: 10px 10px 0 0;
   z-index: 100;
   transition: 0.3s;
-
-  &.active {
-    padding: 40px 0 10px;
-  }
 
   .container {
     display: flex;

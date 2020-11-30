@@ -147,7 +147,7 @@ export default {
     }
   }
 
-  &--cart {
+  &--basket {
     display: flex;
     align-items: center;
     line-height: 23px;

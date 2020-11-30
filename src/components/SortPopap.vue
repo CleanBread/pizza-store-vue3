@@ -20,7 +20,7 @@
       <ul>
         <li
           v-for="(item, index) in sortCats"
-          :class="{ active: currentCat === index }"
+          :class="{ active: currentSort === item.type }"
           :key="index"
           @click="changeCurrentCat(index)"
         >
@@ -33,8 +33,15 @@
 
 <script>
 import { onMounted, onUnmounted, ref } from 'vue';
+import { useStore } from 'vuex';
 export default {
+  props: {
+    currentSort: {
+      required: true,
+    },
+  },
   setup() {
+    const store = useStore();
     const sortCats = [
       {
         name: 'популярности',
@@ -48,13 +55,13 @@ export default {
     const isVisiblePopap = ref(false);
     const sortBlockRef = ref(null);
     const activeCatText = ref(sortCats[0].name);
-    const currentCat = ref(0);
     const toggleVisiblePopap = () => {
       isVisiblePopap.value = !isVisiblePopap.value;
     };
 
     const changeCurrentCat = (index) => {
-      currentCat.value = index;
+      store.dispatch('setSort', sortCats[index].type);
+
       activeCatText.value = sortCats[index].name;
       isVisiblePopap.value = false;
     };
@@ -77,7 +84,6 @@ export default {
     return {
       isVisiblePopap,
       toggleVisiblePopap,
-      currentCat,
       activeCatText,
       sortCats,
       changeCurrentCat,

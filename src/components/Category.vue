@@ -20,11 +20,15 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import { useStore } from 'vuex';
 export default {
+  props: {
+    currentCat: {
+      required: true,
+    },
+  },
   setup() {
-    const currentCat = ref('all');
-
+    const store = useStore();
     const categories = [
       'Мясные',
       'Вегетарианская',
@@ -34,10 +38,10 @@ export default {
     ];
 
     const setCurrentCat = (category) => {
-      currentCat.value = category;
+      store.dispatch('setCategory', category);
     };
 
-    return { categories, currentCat, setCurrentCat };
+    return { categories, setCurrentCat };
   },
 };
 </script>

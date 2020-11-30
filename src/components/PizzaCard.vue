@@ -144,7 +144,7 @@ export default {
           background: #ffffff;
           box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.04);
           border-radius: 5px;
-          cursor: auto;
+          cursor: default;
         }
         &.disabled {
           opacity: 0.3;
