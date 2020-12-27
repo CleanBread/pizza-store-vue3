@@ -73,6 +73,7 @@ const mutations = {
     },
     removeAllPizzas(state) {
         state.items = {}
+        state.countsItems = {}
     }
 }
 

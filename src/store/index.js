@@ -1,4 +1,4 @@
-import { createStore } from 'vuex'
+import { createStore, createLogger } from 'vuex'
 
 import { filterStore, basketStore } from './modules';
 
@@ -8,6 +8,7 @@ const store = createStore({
         filter: filterStore,
         basket: basketStore
     },
-    devtools: true
+    devtools: true,
+    plugins: [createLogger()]
 })
 export default store

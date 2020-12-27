@@ -117,8 +117,8 @@
               <span>Вернуться назад</span>
             </div>
           </router-link>
-          <div class="button pay-btn">
-            <span>Оплатить сейчас</span>
+          <div class="button pay-btn" @click="handleOpenModal">
+            <span>Оформить заказ</span>
           </div>
         </div>
       </div>
@@ -134,19 +134,77 @@
         <span>Вернуться назад</span>
       </router-link>
     </div>
+    <Modal
+      :handleClose="handleCloseModal"
+      :handleOpen="handleOpenModal"
+      :isOpen="isModalOpen"
+    >
+      <form class="basket__form" @submit.prevent="handleSubmit">
+        <input
+          type="text"
+          class="basket__form-input"
+          placeholder="Ваше имя"
+          required
+          v-model="formData.name"
+        />
+        <input
+          type="text"
+          required
+          class="basket__form-input"
+          placeholder="Ваш номер телефона"
+          v-maska="'# (###)-###-##-##'"
+          v-model="formData.tel"
+        />
+        <input
+          required
+          type="email"
+          class="basket__form-input"
+          placeholder="Ваш email"
+          v-model="formData.email"
+        />
+        <input
+          required
+          type="text"
+          class="basket__form-input"
+          placeholder="Ваш адрес"
+          v-model="formData.address"
+        />
+        <button class="button pay-btn basket__form-btn">
+          <span>Оформить заказ</span>
+        </button>
+      </form>
+    </Modal>
+    <Tooltip
+      text="Пожалуйста, дождитесь звонка оператора для подтверждения вашего заказа"
+      :handleClose="handleCloseTooltip"
+      :isOpen="isTooltipOpen"
+    />
   </div>
 </template>
 
 <script>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useStore } from 'vuex';
 import PizzaCardBasket from '../components/PizzaCardBasket.vue';
+import Modal from '../components/Modal.vue';
+import Tooltip from '../components/Tooltip.vue';
 export default {
   components: {
     PizzaCardBasket,
+    Modal,
+    Tooltip,
   },
   setup() {
     const store = useStore();
+
+    const formData = ref({
+      name: '',
+      tel: '',
+      email: '',
+      address: '',
+    });
+    const isModalOpen = ref(false);
+    const isTooltipOpen = ref(false);
 
     const pizzas = computed(() => {
       const items = store.getters.getBasketItems;
@@ -162,6 +220,29 @@ export default {
     const addOneMorePizza = (pizza) => store.dispatch('addOneMore', pizza);
     const removeOneMore = (pizza) => store.dispatch('removeOneMore', pizza);
 
+    const handleSubmit = () => {
+      handleCloseModal();
+      removePizzas();
+      handleOpenTooltip();
+      console.log(formData.value);
+    };
+
+    const handleOpenModal = () => {
+      isModalOpen.value = true;
+    };
+
+    const handleCloseModal = () => {
+      isModalOpen.value = false;
+    };
+
+    const handleOpenTooltip = () => {
+      isTooltipOpen.value = true;
+    };
+
+    const handleCloseTooltip = () => {
+      isTooltipOpen.value = false;
+    };
+
     return {
       pizzas,
       totalCount,
@@ -170,9 +251,298 @@ export default {
       removeSelectedPizzas,
       addOneMorePizza,
       removeOneMore,
+      formData,
+      handleSubmit,
+      handleOpenModal,
+      handleCloseModal,
+      isModalOpen,
+      isTooltipOpen,
+      handleCloseTooltip,
+      handleOpenTooltip,
     };
   },
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.basket {
+  &__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  &__form {
+    background: white;
+    border-radius: 12px;
+    padding: 40px 30px;
+    width: 430px;
+    &-btn {
+      font-size: 15px;
+      line-height: 26px;
+    }
+    &-input {
+      outline: none !important;
+      width: 100%;
+      background: #ffffff;
+      border: 1px solid #dddddd;
+      border-radius: 4px;
+      font-size: 16px;
+      line-height: 19px;
+      padding: 18px;
+      margin-bottom: 15px;
+    }
+  }
+
+  .content__title {
+    display: flex;
+    align-items: center;
+    font-size: 32px;
+
+    svg {
+      position: relative;
+      top: -2px;
+      width: 30px;
+      height: 30px;
+      margin-right: 10px;
+      path {
+        stroke: $black;
+        strokewidth: 1.9;
+      }
+    }
+  }
+
+  &__clear {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+
+    span {
+      display: inline-block;
+      margin-left: 7px;
+      color: #b6b6b6;
+      font-size: 18px;
+    }
+
+    span,
+    svg,
+    path {
+      transition: all $duration ease-in-out;
+    }
+
+    &:hover {
+      svg {
+        path {
+          stroke: darken($color: #b6b6b6, $amount: 50);
+        }
+      }
+      span {
+        color: darken($color: #b6b6b6, $amount: 50);
+      }
+    }
+  }
+
+  &__item {
+    display: flex;
+    width: 100%;
+    border-top: 1px solid $gray-line;
+    padding-top: 30px;
+    margin-top: 30px;
+
+    &-img {
+      display: flex;
+      align-items: center;
+      margin-right: 15px;
+      width: 10%;
+
+      img {
+        width: 80px;
+        height: 80px;
+      }
+    }
+
+    &-info {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      width: 40%;
+
+      h3 {
+        font-weight: bold;
+        font-size: 22px;
+        line-height: 27px;
+        letter-spacing: 0.01em;
+      }
+
+      p {
+        font-size: 18px;
+        color: #8d8d8d;
+      }
+    }
+
+    &-count {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 13%;
+
+      &-minus {
+        svg {
+          path:first-of-type {
+            display: none;
+          }
+        }
+      }
+
+      b {
+        font-size: 22px;
+      }
+    }
+
+    &-price {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 33%;
+
+      b {
+        font-weight: bold;
+        font-size: 22px;
+        letter-spacing: 0.01em;
+      }
+    }
+
+    &-remove {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      width: 4%;
+
+      .button {
+        border-color: darken($color: $gray-line, $amount: 10);
+      }
+
+      svg {
+        transform: rotate(45deg);
+
+        path {
+          fill: darken($color: $gray-line, $amount: 15);
+        }
+      }
+
+      .button {
+        svg {
+          width: 11.5px;
+          height: 11.5px;
+          position: relative;
+        }
+        &:hover,
+        &:active {
+          border-color: darken($color: $gray-line, $amount: 80);
+          background-color: darken($color: $gray-line, $amount: 80);
+        }
+      }
+    }
+  }
+
+  &__bottom {
+    margin: 50px 0;
+
+    &-details {
+      display: flex;
+      justify-content: space-between;
+
+      span {
+        font-size: 22px;
+
+        &:last-of-type {
+          b {
+            color: $red;
+          }
+        }
+      }
+    }
+
+    &-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 40px;
+
+      .go-back-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 210px;
+
+        border-color: darken($color: $gray-line, $amount: 10);
+
+        span {
+          color: darken($color: $gray-line, $amount: 20);
+          font-weight: 500;
+          font-weight: 600;
+        }
+
+        &:hover {
+          background-color: darken($color: $gray-line, $amount: 90);
+          border-color: darken($color: $gray-line, $amount: 90);
+
+          span {
+            color: $gray-line;
+          }
+        }
+
+        svg {
+          margin-right: 12px;
+          path {
+            fill: transparent;
+            strokewidth: 2;
+          }
+        }
+      }
+
+      .pay-btn {
+        font-size: 16px;
+        font-weight: 600;
+        width: 210px;
+        padding: 16px;
+      }
+    }
+  }
+
+  &--empty {
+    margin: 0 auto;
+    width: 560px;
+    text-align: center;
+
+    h2 {
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 18px;
+      line-height: 145.4%;
+      letter-spacing: 0.01em;
+      color: #777777;
+    }
+
+    icon {
+      position: relative;
+      top: 2px;
+    }
+
+    img {
+      display: block;
+      width: 300px;
+      margin: 45px auto 60px;
+    }
+
+    .button--black {
+      padding: 12px 0 14px;
+      width: 230px;
+      margin: 0 auto;
+      font-weight: 600;
+      font-size: 18px;
+    }
+  }
+}
+</style>

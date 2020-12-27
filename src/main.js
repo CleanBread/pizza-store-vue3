@@ -1,5 +1,8 @@
 import { createApp } from 'vue'
+import Maska from 'maska'
+
 import App from './App.vue'
+
 import router from './router';
 import store from './store';
 
@@ -13,4 +16,5 @@ app.config.errorHandler = function (err, vm, info) {
 app
     .use(store)
     .use(router)
+    .use(Maska)
     .mount('#app')
