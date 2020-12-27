@@ -30,6 +30,7 @@ export default {
   setup() {
     const store = useStore();
     const pizzas = ref([]);
+
     const currentCat = computed(() => store.getters.getCategory);
     const currentSort = computed(() => store.getters.getSort);
 

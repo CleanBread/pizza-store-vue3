@@ -6,6 +6,7 @@ import store from './store';
 import './styles/app.scss'
 
 const app = createApp(App)
+app.config.devtools = true;
 app.config.errorHandler = function (err, vm, info) {
     console.log(err, vm, info, 'err')
 }

@@ -1,14 +1,14 @@
 <template>
-  <div className="pizza-block">
-    <img className="pizza-block__image" :src="imageUrl" alt="Pizza" />
-    <h4 className="pizza-block__title">{{ name }}</h4>
-    <div className="pizza-block__selector">
+  <div class="pizza-block">
+    <img class="pizza-block__image" :src="imageUrl" alt="Pizza" />
+    <h4 class="pizza-block__title">{{ name }}</h4>
+    <div class="pizza-block__selector">
       <ul>
         <li
           :key="item.id"
           v-for="item in types"
-          :class="{ active: activeType === item.id }"
-          @click="onSelectType(item.id)"
+          :class="{ active: activeType.id === item.id }"
+          @click="onSelectType(item)"
         >
           {{ item.name }}
         </li>
@@ -24,9 +24,9 @@
         </li>
       </ul>
     </div>
-    <div className="pizza-block__bottom">
-      <div className="pizza-block__price">от {{ price }} ₽</div>
-      <div className="button button--outline button--add" onClick="{addPizza}">
+    <div class="pizza-block__bottom">
+      <div class="pizza-block__price">от {{ price }} ₽</div>
+      <div class="button button--outline button--add" @click="onAddPizza">
         <svg
           width="12"
           height="12"
@@ -40,17 +40,18 @@
           />
         </svg>
         <span>Добавить</span>
-        <i>1</i>
+        <i v-if="countItems[id]">{{ countItems[id] }}</i>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { toRefs, ref } from 'vue';
+import { toRefs, ref, computed } from 'vue';
+import { useStore } from 'vuex';
 export default {
   props: {
-    _id: {
+    id: {
       type: Number,
       require: false,
     },
@@ -76,8 +77,12 @@ export default {
     },
   },
   setup(props) {
-    const { types, sizes } = toRefs(props);
-    let activeType = ref(types.value[0].id);
+    const { types, sizes, id, imageUrl, name, price } = toRefs(props);
+    const store = useStore();
+
+    const countItems = computed(() => store.getters.getCountsItems);
+
+    let activeType = ref(types.value[0]);
     let activeSize = ref(sizes.value[0]);
 
     const onSelectType = (type) => {
@@ -88,11 +93,24 @@ export default {
       activeSize.value = size;
     };
 
+    const onAddPizza = () => {
+      store.dispatch('addPizza', {
+        id: id.value,
+        imageUrl: imageUrl.value,
+        name: name.value,
+        price: price.value,
+        size: activeSize.value,
+        type: activeType.value,
+      });
+    };
+
     return {
       activeType,
       activeSize,
       onSelectType,
       onSelectSize,
+      onAddPizza,
+      countItems,
     };
   },
 };

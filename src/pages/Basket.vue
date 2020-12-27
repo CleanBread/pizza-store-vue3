@@ -34,7 +34,7 @@
           </svg>
           Корзина
         </h2>
-        <div class="basket__clear">
+        <div class="basket__clear" @click="removePizzas">
           <svg
             width="20"
             height="20"
@@ -76,9 +76,15 @@
         </div>
       </div>
       <div class="content__items--basket">
-        <!-- {
-                        pizzaBlocks
-                    } -->
+        <PizzaCardBasket
+          v-for="pizza in pizzas"
+          :key="pizza.id"
+          :pizza="pizza.pizza"
+          :count="pizza.count"
+          :removeSelectedPizzas="removeSelectedPizzas"
+          :addOneMorePizza="addOneMorePizza"
+          :removeOneMore="removeOneMore"
+        />
       </div>
       <div class="basket__bottom">
         <div class="basket__bottom-details">
@@ -132,16 +138,38 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+import { useStore } from 'vuex';
+import PizzaCardBasket from '../components/PizzaCardBasket.vue';
 export default {
+  components: {
+    PizzaCardBasket,
+  },
   setup() {
-    const pizzas = {};
-    const totalCount = 5;
-    const totalPrice = 300;
+    const store = useStore();
+
+    const pizzas = computed(() => {
+      const items = store.getters.getBasketItems;
+
+      return Object.values(items);
+    });
+    const totalPrice = computed(() => store.getters.getTotalPrice);
+    const totalCount = computed(() => store.getters.getTotalCount);
+
+    const removePizzas = () => store.dispatch('removeAllPizzas');
+    const removeSelectedPizzas = (pizza) =>
+      store.dispatch('removeSelectedPizzas', pizza);
+    const addOneMorePizza = (pizza) => store.dispatch('addOneMore', pizza);
+    const removeOneMore = (pizza) => store.dispatch('removeOneMore', pizza);
 
     return {
       pizzas,
       totalCount,
       totalPrice,
+      removePizzas,
+      removeSelectedPizzas,
+      addOneMorePizza,
+      removeOneMore,
     };
   },
 };

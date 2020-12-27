@@ -1,11 +1,12 @@
 import { createStore } from 'vuex'
 
-import { filterStore } from './modules';
+import { filterStore, basketStore } from './modules';
 
 const store = createStore({
     strict: process.env.NODE_ENV === 'development',
     modules: {
-        filter: filterStore
+        filter: filterStore,
+        basket: basketStore
     },
     devtools: true
 })

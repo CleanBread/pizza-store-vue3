@@ -53,13 +53,17 @@
 
 <script>
 import Button from './Button';
+import { computed } from 'vue';
+import { useStore } from 'vuex';
 export default {
   components: {
     Button,
   },
   setup() {
-    const totalPrice = 1000;
-    const totalCount = 3;
+    const store = useStore();
+
+    const totalPrice = computed(() => store.getters.getTotalPrice);
+    const totalCount = computed(() => store.getters.getTotalCount);
 
     return {
       totalPrice,
